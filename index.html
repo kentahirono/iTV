@@ -1,0 +1,666 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Cache-Control" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png">
+<link rel="manifest" href="favicon/manifest.json">
+<link rel="mask-icon" href="favicon/safari-pinned-tab.svg" color="#ff8608">
+<link rel="shortcut icon" href="favicon/favicon.ico">
+<meta name="msapplication-config" content="favicon/browserconfig.xml">
+<meta name="theme-color" content="#ffffff">
+<title>iTV</title>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css">
+<style>
+@import url(//fonts.googleapis.com/earlyaccess/notosansjp.css);
+* {
+	margin: 0;
+	padding: 0;
+}
+html, body {
+	height: 100%;
+	color: #ccc;
+	background-color: #393939;
+}
+body {
+	font-family: ‘Noto Sans Japanese’, sans-serif;
+	font-size: 100%;
+	text-align: center;
+	overflow: hidden;
+	padding-top: 50px;
+}
+#wrapper {
+	margin: 0 auto;
+	width: 100%;
+	height: 100%;
+}
+#nav {
+	width: 640px;
+	margin: 0 auto;
+	margin-bottom: -1px;
+}
+.navbar {
+	margin-bottom: 0;
+}
+.navbar-fixed-top {
+	margin: 0 auto;
+	background-color: #333;
+	border: 1px solid #222;
+}
+.btn-custom, .btn-custom:hover, .btn-custom:focus, .btn-custom.focus, .btn-custom:active, .btn-custom.active, .btn-custom:visited, .btn-custom:active:hover, .btn-custom.active:hover {
+	background-color: #333;
+	color: #ccc;
+	border-color: #222;
+	outline: none;
+}
+.btn {
+	font-size: 15px;
+}
+.btn-group {
+	margin-top: 7px;
+}
+#container {
+	width: 640px;
+	height: 100%;
+	margin: 0 auto;
+}
+/****************************/
+ul {
+	margin-bottom: 0px;
+}
+ul.delay-show li {
+	position: relative;
+}
+.list-group {
+	margin-bottom: 0;
+}
+.list-group-item {
+	text-align: left;
+	background-color: #333;
+	color: #ccc;
+	border-color: #222;
+	padding: 15px;
+	line-height: 20px;
+	cursor: pointer;
+}
+.list-group-item:first-child {
+	border-top-left-radius: 0;
+	border-top-right-radius: 0;
+}
+.p_name {
+	font-size: 16px;
+	margin-bottom: 2px;
+}
+.p_time {
+	font-size: 14px;
+	font-weight: normal;
+	float: right;
+}
+.p_title {
+	font-size: 14px;
+}
+/****************************/
+#video_window {
+	position: relative;
+	margin: 0 auto;
+	width: 640px;
+	height: 360px;
+	border-radius: 4px;
+	background: #222;
+	display: none;
+	margin-bottom: 10px;
+}
+#video {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 640px;
+	height: 360px;
+	border-radius: 4px;
+	opacity: 0;
+}
+#loading_window {
+	display: table-cell;
+	vertical-align: middle !important;
+	text-align: center;
+	top: 0;
+	left: 0;
+	width: 640px;
+	height: 360px;
+	border-radius: 4px;
+}
+.progress {
+	width: 40%;
+	height: 8px;
+	display: inline-block;
+	margin-bottom: 0px !important;
+}
+.progress-bar {
+	width: 10%;
+}
+#alert_window {
+	display: table-cell;
+	vertical-align: middle;
+	text-align: center;
+	top: 0;
+	left: 0;
+	width: 640px;
+	height: 360px;
+	border-radius: 4px;
+	background: #222;
+}
+#alert {
+	display: inline-block;
+	font-size: 14px;
+	color: #ccc;
+}
+#programs {
+	margin-top: 0;
+}
+/****************************/
+.modal {
+	text-align: center;
+	padding: 0!important;
+}
+
+.modal:before {
+	content: '';
+	display: inline-block;
+	height: 100%;
+	vertical-align: middle;
+	margin-right: -4px;
+}
+
+.modal-dialog {
+	display: inline-block;
+	text-align: left;
+	vertical-align: middle;
+}
+.modal-content {
+	font-size: 14px;
+}
+.modal-body {
+	padding: 20px;
+	text-align: center;
+	color: #000;
+}
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.concat.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fastclick/1.0.6/fastclick.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bowser/1.7.1/bowser.min.js"></script>
+<script src="https://cdn.jsdelivr.net/hls.js/0.7.6/hls.min.js"></script>
+<script src="setting.js"></script>
+<script>
+'use strict';
+
+// モバイルPC分岐
+if (bowser.mobile || bowser.tablet) {
+	var mobile = true;
+	var waittime = 40000; //映像読み込み時の異常監視待ち時間
+} else {
+	var mobile = false;
+	var waittime = 20000;
+}
+
+// 視聴画面の状態
+var display = false;
+
+// リザイズ処理
+$(window).on('load resize', function() {
+	if (mobile) {
+		var windowWidth = $(window).innerWidth();
+		$('#video_window, #video, #loading_window, #alert_window').css({
+			'width': windowWidth,
+			'height': windowWidth * 9 / 16
+		});
+		$('#container, #nav').css('width', windowWidth);
+	} else {
+		if (display) {
+			$('#programs').css('margin-top', (($(window).innerHeight() - 360) / 2) - 50);
+		}
+	}
+});
+
+$(function() {
+	// FastClick
+	FastClick.attach(document.body);
+	
+	// スクロールバー登録
+	if (!mobile) {
+		$('body').mCustomScrollbar({
+			scrollInertia: 500,
+			mouseWheelPixels: 300,
+			advanced: {
+				updateOnContentResize: true
+			}
+		});
+	}
+	
+	// scrollTop関数化
+	function scrollTop() {
+		if (!mobile) {
+			$('body').mCustomScrollbar("scrollTo", "top", {
+				scrollInertia: 0
+			});
+		} else {
+			$('body').scrollTop(0);
+		}
+	};
+	
+	// 地上波BS/CS(上部ボタン)
+	var btnType = 'TS';
+	
+	// パラメータ
+	var params = {
+		'num': 1,
+		'BonDriver': 'BonDriver_Spinel_PT3-T0',
+		'ServiceID': 1024,
+		'ChSpace': 0,
+		'NHKMODE': 11,
+		'resolution': '320x180',
+		'volume': 0.5
+	};
+	for (var i = 0; i < tunerList.length; i++) {
+		tunerList[i]['use'] = 'false';
+	}
+	
+	// 番組表生成
+	function program() {
+		$('#programs ul li').remove();
+		$.when(
+			$.ajax({
+				type: 'GET',
+				url: 'http://%IDPASS%' + location.host + '/TvProgram_TvRock.html',
+				cache: false,
+				dataType: 'html',
+				timeout: 1000
+			}).done(function(html) {
+				var parse = $.parseHTML(html);
+				for (var i = 0; i < parse.length; i++) {
+					if (parse[i].className == 'p_time') {
+						var pTime = parse[i].innerHTML;
+						pTime = pTime.replace(/^\s+|\s+$/g, '');
+					}
+					if (parse[i].className == 'p_title') {
+						var pTitle = parse[i].innerHTML;
+						pTitle = pTitle.replace('[デ]', '');
+						pTitle = pTitle.replace('[解]', '');
+						pTitle = pTitle.replace('[手]', '');
+						pTitle = pTitle.replace('[字]', '');
+						pTitle = pTitle.replace('[二]', '');
+						pTitle = pTitle.replace('[多]', '');
+						pTitle = pTitle.replace('[SS]', '');
+						pTitle = pTitle.replace('[HV]', '');
+						pTitle = pTitle.replace('[無]', '');
+					}
+					if (parse[i][2]) {
+						var serviceID = $(parse[i][2])[0].value;
+						for (var j = 0; j < serviceList.length; j++) {
+							if (serviceList[j]['id'] == serviceID) {
+								var type = serviceList[j]['type'];
+								var pName = serviceList[j]['name'];
+							}
+						}
+						$('#programs ul').append('<li class="list-group-item list_' + type + ' list_ALL" id="' + serviceID + '"><div class="p_name">' + pName + '<span class="p_time">' + pTime + '</span></div><div class="p_title">' + pTitle + '</div></li>');
+					}
+				}
+				scrollTop();
+				$('.list_ALL').hide();
+				$('.list_' + btnType).css({'top': 0, 'opacity': 0});
+				$('.list_' + btnType).show();
+				setTimeout(function() {
+					$('.list_' + btnType).css({'top': 100, 'opacity': 0}).each(function(i) {
+						$(this).delay(100 * i).animate({'top': 0, 'opacity': 1}, {duration: 400, easing: 'easeOutQuart'});
+					});
+				}, 500);
+			}).fail(function() {
+				$.ajax(this);
+			})
+		).done(function() {
+			//updateTimer = setInterval(updateStatus, 3000);
+		});
+	};
+	program();
+	
+	// 配信中の番組表を更新
+	/*var updateTimer;
+	var updateStatus = function() {
+		$.ajax({
+			type: 'GET',
+			url: 'http://%IDPASS%' + location.host + '/WI_GET_LIVE_STREAM.html',
+			cache: false,
+			dataType: 'text',
+			timeout: 1000
+		}).done(function(text) {
+			if (text) {
+				$('#programs ul li').css('background-color', '#333');
+				var text = text.replace(/, /g, ',');
+				var num = text.split('\n');
+				for (var i = 0; i < num.length; i++) {
+					num[i] = num[i].split(',');
+				}
+				for (var i = 0; i < num.length; i++) {
+					for (var j = 0; j < num[i].length; j++) {
+						if(j == 4) {
+							$('#' + num[i][j]).css('background-color', '#1a599f');
+						}
+					}
+				}
+			}
+		}).fail(function() {
+			$.ajax(this);
+		});
+	};*/
+	
+	// 番組表切り替えボタン
+	$(document).on('click', '.btnType', function() {
+		btnType = $(this).attr('id');
+		if (display) {
+			displayClose();
+			program();
+		} else {
+			scrollTop();
+			$('.list_ALL').hide();
+			$('.list_' + btnType).show();
+			$('.list_' + btnType).each(function(i) {
+				var pos = $(this).offset().top;
+				var value = pos - $(window).height();
+				if ($(window).scrollTop() > value) {
+					$(this).css({'top': 100, 'opacity': 0});
+					$(this).delay(100 * i).animate({'top': 0, 'opacity': 1}, {duration: 400, easing: 'easeOutQuart'});
+				} else {
+					$(this).css({'top': '0', 'opacity': 1});
+				}
+			});
+		}
+	});
+	
+	// 映像を閉じる
+	function displayClose() {
+		$('.btn-group button').prop("disabled", false);
+		//updateTimer = setInterval(updateStatus, 5000);
+		display = false;
+		var video = $('#video').get(0);
+		if (loadingStart) {
+			params['volume'] = video.volume;
+		} else {
+			params['volume'] = 0.5;
+		}
+		$('#video_window, #loading_window').animate({'top': 100, 'opacity': 0}, {duration: 400, easing: 'easeOutQuart', complete: function() {
+			//clearInterval(countTimer);
+			$('.progress-bar').css('width', '10%');
+			$('#video_window, #loading_window').hide();
+			$('#video').remove();
+			$.ajax({
+				type: 'GET',
+				url: 'http://%IDPASS%' + location.host + '/WI_STOP_STREAM.html?num=' + params['num'],
+				cache: false,
+				dataType: 'text',
+				timeout: 1000
+			});
+			$('#programs').css('margin-top', 0);
+			scrollTop();
+			$('.list_ALL').hide();
+			$('.list_' + btnType).show();
+			setTimeout(function() {
+				$('.list_' + btnType).css({'top': 100, 'opacity': 0}).each(function(i) {
+					$(this).delay(100 * i).animate({'top': 0, 'opacity': 1}, {duration: 400, easing: 'easeOutQuart'});
+				});
+			}, 500);
+		}});
+	};
+	
+	// 映像に切り替え
+	$(document).on('click', '.list-group-item', function() {
+		$('.btn-group button').prop("disabled", true);
+		//clearInterval(updateTimer);
+		params['ServiceID'] = $(this).attr('id');
+		var type = $(this).attr('class');
+		var typeText;
+		if (type.indexOf('CS') != -1) {
+			params['ChSpace'] = 1;
+			type = 'S';
+			typeText = 'BS/CS';
+		} else if (type.indexOf('BS') != -1) {
+			params['ChSpace'] = 0;
+			type = 'S';
+			typeText = 'BS/CS';
+		} else {
+			params['ChSpace'] = 0;
+			type = 'T';
+			typeText = '地上波';
+		}
+		var usedAll = true;
+		$.when(	
+			$.ajax({
+				type: 'GET',
+				url: 'http://%IDPASS%' + location.host + '/WI_GET_LIVE_STREAM.html',
+				cache: false,
+				dataType: 'text',
+				timeout: 1000
+			}).done(function(text) {
+				if (text) {
+					var text = text.replace(/, /g, ',');
+					var num = text.split('\n');
+					for (var i = 0; i < num.length; i++) {
+						num[i] = num[i].split(',');
+					}
+					for (var i = 0; i < tunerList.length; i++) {
+						tunerList[i]['use'] = 'false';
+					}
+					for (var i = 0; i < num.length; i++) {
+						for (var j = 0; j < num[i].length; j++) {
+							if(j == 1) {
+								tunerList[num[i][j] - 1]['use'] = 'true';
+							}
+						}
+					}
+					for (var i = 0; i < tunerList.length; i++) {
+						if (tunerList[i]['bon'].indexOf(type) != -1 && tunerList[i]['use'] == 'false') {
+							params['num'] = tunerList[i]['num'];
+							params['BonDriver'] = 'BonDriver_Spinel_PT3-' + tunerList[i]['bon'];
+							usedAll = false;
+						}
+					}
+				} else {
+					for (var i = 0; i < tunerList.length; i++) {
+						if (tunerList[i]['bon'].indexOf(type) != -1) {
+							params['num'] = tunerList[i]['num'];
+							params['BonDriver'] = 'BonDriver_Spinel_PT3-' + tunerList[i]['bon'];
+						}
+					}
+					usedAll = false;
+				}
+			}).fail(function() {
+				$.ajax(this);
+			})
+		).done(function() {
+			if (usedAll) {
+				$('.btn-group button').prop("disabled", false);
+				$('#used-all .modal-body span').remove();
+				$('#used-all .modal-body').append('<span>' + typeText + 'のチューナーは全て使用中です<br />チューナーが空くまで使用できません</span>');
+				$('#used-all').modal();
+			} else {
+				$.ajax({
+					type: 'GET',
+					url: 'http://%IDPASS%' + location.host + '/StartTv.html?num=' + params['num'] + '&Bon_Sid_Ch=' + params['BonDriver'] + '.dll%2C' + params['ServiceID'] + '%2C' + params['ChSpace'] + '&NHKMODE=' + params['NHKMODE'] + '&resolution=' + params['resolution'] + '&volume=' + params['volume'] + '&redirect=ViewTV' + params['num'] + '.html',
+					cache: false,
+					dataType: 'text',
+					timeout: 1000
+				});
+				// 表示の切り替え
+				var count = 0;
+				$.when(
+					$('.list_' + btnType).each(function() {
+						var pos = $(this).offset().top;
+						var win = $(window).height();
+						if (pos > 0 && pos < win) {
+							$(this).delay(100 * count).animate({'top': -100, 'opacity': 0}, {duration: 400, easing: 'easeOutQuart'});
+							count = count + 1;
+						} else {
+							$(this).css('opacity', 0);
+						}
+					})
+				).done(function(){
+					$('.list_' + btnType).hide();
+					scrollTop();
+				}).done(function(){
+					setTimeout(function() {
+						display = true;
+						$('#programs').css('margin-top', (($(window).innerHeight() - 360) / 2) - 50);
+						$('#video_window, #loading_window').css({'top': 100, 'opacity': 0});
+						$('#video_window, #loading_window').show();
+						$('#video_window, #loading_window').animate({'top': 0, 'opacity': 1}, {duration: 400, easing: 'easeOutQuart'});
+						checkTimer = setInterval(checkStatus, 2000);
+						setTimeout(function() {
+							loadingStatus();
+						}, waittime);
+					}, 500);
+				});
+			};
+		});
+	});
+	
+	// TvRemoteViewer_VBの状況チェック
+	var checkTimer;
+	//var countTimer;
+	var loadingStart =true;
+	function checkStatus() {
+		if (loadingStart) {
+			$.ajax({
+				type: 'GET',
+				url: 'http://%IDPASS%' + location.host + '/WI_GET_TSFILE_COUNT2.html?num=' + params['num'],
+				cache: false,
+				dataType: 'text',
+				timeout: 1000
+			}).done(function(num) {
+				num = Math.abs(num);
+				if (num == 1) {
+					$('.progress-bar').css('width', '40%');
+					$('.progress-bar').attr('value', '40');
+				} else if (num == 2) {
+					$('.progress-bar').css('width', '70%');
+					$('.progress-bar').attr('value', '70');
+				} else if (num >= 3) {
+					$('.btn-group button').prop("disabled", false);
+					clearInterval(checkTimer);
+					$('.progress-bar').css('width', '100%');
+					$('.progress-bar').attr('value', '100');
+					if (mobile) {
+						$('#video_window').append("<video id='video'><source src='http://%IDPASS%" + location.host + "/%FILEROOT%mystream" + params['num'] + ".m3u8' type='application/x-mpegURL'></video>");
+					} else {
+						$('#video_window').append("<video id='video' controls></video>");
+					}
+					if (mobile) {
+						var windowWidth = $(window).innerWidth();
+						$('#video_window, #video').css({
+							'width': windowWidth,
+							'height': windowWidth * 9 / 16
+						});
+					}
+					if (Hls.isSupported()) {
+						var video = document.getElementById('video');
+						var hls = new Hls();
+						hls.loadSource('http://%IDPASS%' + location.host + '/%FILEROOT%mystream' + params['num'] + '.m3u8');
+						hls.attachMedia(video);
+						hls.on(Hls.Events.MANIFEST_PARSED, function() {
+							video.volume = params['volume'];
+							video.play();
+						});
+					}
+					//countTimer = setInterval(countStatus, 3000); //iPhoneが自動再生しないので3秒後エラーを返してしまう
+					setTimeout(function() {
+						$('#loading_window').hide();
+						$('#video').css('opacity', 1.0);
+					}, 800);
+				}
+			});
+		};
+	};
+	
+	// 映像視聴中の異常停止監視
+	/*var newTime = 1;
+	var oldTime = 0;
+	var countStatus = function() {
+		oldTime = newTime;
+		newTime = $('#video').get(0).currentTime;
+		var pause = $('#video').get(0).paused;
+		if (!pause && oldTime == newTime) {
+			clearInterval(countTimer);
+			$('#loading_window').hide();
+			$('#alert_window').show();
+			setTimeout(function() {
+				displayClose();
+			}, 3000);
+		}
+	};*/
+	
+	// 映像読み込み時の異常監視
+	function loadingStatus() {
+		if ($('.progress-bar').length) {
+			var str = $('.progress-bar').attr('value');
+			if (str < 70) {
+				clearInterval(checkTimer);
+				loadingStart = false;
+				$('#loading_window').hide();
+				$('#alert_window').show();
+				setTimeout(function() {
+					displayClose();
+				}, 3000);
+			}
+		}
+	};
+});
+</script>
+</head>
+<body>
+<div id="wrapper">
+	<div id="nav">
+		<nav class="navbar navbar-fixed-top">
+			<div class="btn-group">
+				<button type="button" id="TS" class="btn btn-custom btnType">地上波</button>
+				<button type="button" id="BS" class="btn btn-custom btnType">ＢＳ</button>
+				<button type="button" id="CS" class="btn btn-custom btnType">ＣＳ</button>
+			</div>
+		</nav>
+	</div>
+	<div id="container">
+		<div id="programs" class="list-group">
+			<ul class="delay-show">
+			</ul>
+		</div>
+		<div id="video_window">
+			<div id="loading_window">
+				<div class="progress" style="z-index: 2;">
+					<div class="progress-bar progress-bar-striped active" role="progressbar" data-value='10' aria-valuemin="0" aria-valuemax="100">
+					</div>
+				</div>
+			</div>
+			<div id="alert_window" style="display: none;">
+				<div id="alert">異常停止しました</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal fade" id="used-all" role="dialog">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-body"></div>
+		</div>
+	</div>
+</div>
+</body>
+</html>
